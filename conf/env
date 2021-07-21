@@ -1,0 +1,33 @@
+DB_SRC="3.108.123.110"
+DB_PORT="3306"
+DB_USERNAME="pentaho"
+DB_PASSWORD="Pentaho@1243"
+// Context.xml -> /home/pentaho/app/pentaho/pentaho-server/tomcat/webapps/pentaho/META-INF/
+//mysql5.hibernate.cfg.xml -> /home/pentaho/app/pentaho/pentaho-server/pentaho-solutions/system/hibernate/
+//server.properties -> /home/pentaho/app/pentaho/pentaho-server/pentaho-solutions/system/
+s/tcp.port=9092/tcp.port=6092/g
+//GettingStartedDB.properties -> /home/pentaho/app/pentaho/pentaho-server/pentaho-solutions/system/GettingStartedDB.properties
+"s/-Xms2048m -Xmx6144m/-Xms550m -Xmx1024m/g
+//start-pentaho.sh -> /home/pentaho/app/pentaho/pentaho-server/start-pentaho.sh
+CATALINA_OPTS="-Xms550m -Xmx1024m  -Djava.rmi.server.hostname=localhost -XX:MaxPermSize=256m -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000"
+//setenv.sh  -> /home/pentaho/app/pentaho/pentaho-server/tomcat/bin/
+add 644 user permissions
+//server.xml  -> /home/pentaho/app/pentaho/pentaho-server/tomcat/conf/ 
+//repository.xml  -> /home/pentaho/app/pentaho/pentaho-server/pentaho-solutions/system/jackrabbit/
+LDAP_SRC="ldap.appdev.armedia.com"
+LDAP_PORT="389"
+// applicationContext-security-ldap.properties -> /home/pentaho/app/pentaho/pentaho-server/pentaho-solutions/system/
+//repository.spring.properties -> /home/pentaho/app/pentaho/pentaho-server/pentaho-solutions/system/
+//quartz.properties -> /home/pentaho/app/pentaho/pentaho-server/pentaho-solutions/system/quartz/
+//hibernate-settings.xml -> /home/pentaho/app/pentaho/pentaho-server/pentaho-solutions/system/hibernate/
+//activemq.xml -> /home/pentaho/app/pentaho/pentaho-server/pentaho-solutions/system/karaf/etc/
+//audit_sql.xml -> /home/pentaho/app/pentaho/pentaho-server/pentaho-solutions/system/
+
+init script 
+#Will be initialize in init pentaho container in K8's
+#COPY quartz-create-db.sql /home/pentaho/install/pentaho
+#--------------Ensure ldap security is being used-----------------
+RUN sed -i  "s/jackrabbit/ldap/g" /home/pentaho/app/pentaho/pentaho-server/pentaho-solutions/system/security.properties
+#--------------Start Pentaho in background-------------------------
+RUN sed -i  "s/startup.sh/catalina.sh run/g" /home/pentaho/app/pentaho/pentaho-server/start-pentaho.sh
+#persistence voluem dir: /home/pentaho/data/pentaho
