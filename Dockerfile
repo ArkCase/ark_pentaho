@@ -23,6 +23,7 @@ COPY ${RESOURCE_PATH}/pentaho-server-ce-${PENTAHO_CE_VERSION}.zip /home/pentaho/
 #Installing unzip in centos
 RUN yum install -y unzip && \
     yum install -y mysql && \
+    yum clean -y all && \
    cd /home/pentaho/app/pentaho && \
     unzip pentaho-server-ce-${PENTAHO_CE_VERSION}.zip
 
