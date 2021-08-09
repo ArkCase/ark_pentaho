@@ -1,8 +1,8 @@
 FROM 345280441424.dkr.ecr.ap-south-1.amazonaws.com/ark_base_java8:latest
-ENV PENTAHO_CE_VERSION=8.1.0.0-365 && \
-    MYSQL_CONNECTOR_VERSION=8.0.24 && \
-    MARIADB_CONNECTOR_VERSION=2.2.6 && \
-    ARKCASE_PRE_AUTH_VERSION=4-1.1.1 && \
+ENV PENTAHO_CE_VERSION=8.1.0.0-365 \
+    MYSQL_CONNECTOR_VERSION=8.0.24 \
+    MARIADB_CONNECTOR_VERSION=2.2.6 \
+    ARKCASE_PRE_AUTH_VERSION=4-1.1.1 \
     BASE_PATH=/home/pentaho/app/pentaho/pentaho-server
 ARG RESOURCE_PATH="artifacts"
 
