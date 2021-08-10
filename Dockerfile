@@ -3,7 +3,9 @@ ENV PENTAHO_CE_VERSION=8.1.0.0-365 \
     MYSQL_CONNECTOR_VERSION=8.0.24 \
     MARIADB_CONNECTOR_VERSION=2.2.6 \
     ARKCASE_PRE_AUTH_VERSION=4-1.1.1 \
-    BASE_PATH=/app/pentaho/pentaho-server
+    BASE_PATH=/home/pentaho/app/pentaho/pentaho-server
+	PENTAHO_USER="pentaho" \
+	PENTAHO_PORT="2002"
 ARG RESOURCE_PATH="artifacts"
 
 LABEL ORG="Armedia LLC" \
@@ -12,10 +14,10 @@ LABEL ORG="Armedia LLC" \
       MAINTAINER="Armedia LLC"
 
 #-----------PENTAHO SETUP-------------------------------------
-RUN mkdir -p /app/data/pentaho &&\
-    mkdir -p /app/pentaho && \
-    mkdir -p /app/tmp/pentaho && \
-    useradd --system --user-group pentaho
+RUN mkdir -p /home/pentaho/app/data/pentaho &&\
+    mkdir -p /home/pentaho/app/pentaho && \
+    mkdir -p /home/pentaho/app/tmp/pentaho && \
+    useradd --system --user-group ${PENTAHO_USER}
 
 #------------PENTAHO CE------------------------------------------
 
@@ -46,7 +48,9 @@ RUN cp -rf  ${BASE_PATH}/tomcat/webapps/pentaho/mantle/home/properties/ ${BASE_P
     cp -rf  ${BASE_PATH}/tomcat/webapps/pentaho/mantle/browser/css/browser.css ${BASE_PATH}/tomcat/webapps/pentaho/mantle/css && \
     cp -rf  ${BASE_PATH}/tomcat/webapps/pentaho/mantle/browser/* ${BASE_PATH}/tomcat/webapps/pentaho/mantle && \    chown -R pentaho: /home/pentaho/
 
-EXPOSE 6092 2002
+USER pentaho
 
-WORKDIR /app/pentaho/pentaho-server
+EXPOSE ${PENTAHO_PORT}
+
+WORKDIR /home/pentaho/app/pentaho/pentaho-server
 CMD ["start-pentaho.sh"] 
