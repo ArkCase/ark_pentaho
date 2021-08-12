@@ -1,11 +1,11 @@
 FROM 345280441424.dkr.ecr.ap-south-1.amazonaws.com/ark_base_java8:latest
 ENV PENTAHO_CE_VERSION=8.1.0.0-365 \
-    MYSQL_CONNECTOR_VERSION=8.0.24 \
+    MYSQL_CONNECTOR_VERSION=8.0.25 \
     MARIADB_CONNECTOR_VERSION=2.2.6 \
     ARKCASE_PRE_AUTH_VERSION=4-1.1.1 \
-    BASE_PATH=/home/pentaho/app/pentaho/pentaho-server
-	PENTAHO_USER="pentaho" \
-	PENTAHO_PORT="2002"
+    BASE_PATH=/home/pentaho/app/pentaho/pentaho-server \
+	PENTAHO_USER=pentaho \
+	PENTAHO_PORT=2002
 ARG RESOURCE_PATH="artifacts"
 
 LABEL ORG="Armedia LLC" \
@@ -30,13 +30,13 @@ RUN yum install -y unzip && \
     unzip pentaho-server-ce-${PENTAHO_CE_VERSION}.zip
 
 #Database connectors
-COPY ${RESOURCE_PATH}/mysql-connector-java-${Mysql_Connector_Version}.jar  ${RESOURCE_PATH}/mariadb-java-client-${Mariadb_Connector_Version}.jar ${BASE_PATH}/tomcat/lib/
+COPY ${RESOURCE_PATH}/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar  ${RESOURCE_PATH}/mariadb-java-client-${MARIADB_CONNECTOR_VERSION}.jar ${BASE_PATH}/tomcat/lib/
 
 #Removing old mysql jar version 5.1.17
 RUN rm /home/pentaho/app/pentaho/pentaho-server/tomcat/lib/mysql-connector-java-5.1.17.jar
 
 #---------preauthentication setup----------------------------------------------
-COPY ${RESOURCE_PATH}/arkcase-preauth-springsec-v${Arkcase_Pre_Auth_Version}-bundled.jar ${BASE_PATH}/tomcat/webapps/pentaho/WEB-INF/lib/
+COPY ${RESOURCE_PATH}/arkcase-preauth-springsec-v${ARKCASE_PRE_AUTH_VERSION}-bundled.jar ${BASE_PATH}/tomcat/webapps/pentaho/WEB-INF/lib/
 #---------Update Pentaho to support report designer within ArkCase iframe---------
 RUN cp -rf  ${BASE_PATH}/tomcat/webapps/pentaho/mantle/home/properties/ ${BASE_PATH}/tomcat/webapps/pentaho/mantle/ && \
     cp -rf  ${BASE_PATH}/tomcat/webapps/pentaho/mantle/home/content ${BASE_PATH}/tomcat/webapps/pentaho/mantle && \
