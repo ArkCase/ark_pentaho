@@ -27,13 +27,11 @@ COPY ${RESOURCE_PATH}/pentaho-server-ce-${PENTAHO_CE_VERSION}.zip /home/pentaho/
 RUN yum install -y unzip && \
     yum clean -y all && \
    cd /home/pentaho/app/pentaho && \
-    unzip pentaho-server-ce-${PENTAHO_CE_VERSION}.zip
+    unzip pentaho-server-ce-${PENTAHO_CE_VERSION}.zip && \
+    rm /home/pentaho/app/pentaho/pentaho-server/tomcat/lib/mysql-connector-java-5.1.17.jar
 
 #Database connectors
 COPY ${RESOURCE_PATH}/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar  ${RESOURCE_PATH}/mariadb-java-client-${MARIADB_CONNECTOR_VERSION}.jar ${BASE_PATH}/tomcat/lib/
-
-#Removing old mysql jar version 5.1.17
-RUN rm /home/pentaho/app/pentaho/pentaho-server/tomcat/lib/mysql-connector-java-5.1.17.jar
 
 #---------preauthentication setup----------------------------------------------
 COPY ${RESOURCE_PATH}/arkcase-preauth-springsec-v${ARKCASE_PRE_AUTH_VERSION}-bundled.jar ${BASE_PATH}/tomcat/webapps/pentaho/WEB-INF/lib/
