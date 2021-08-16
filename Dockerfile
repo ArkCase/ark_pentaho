@@ -48,7 +48,6 @@ RUN cp -rf  ${BASE_PATH}/tomcat/webapps/pentaho/mantle/home/properties/ ${BASE_P
     chmod -R 777  /home/pentaho/* && \
     chmod -R 777  /home/pentaho/	
 USER pentaho
-ENV PATH=${BASE_PATH}:/opt/solr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 EXPOSE ${PENTAHO_PORT}
 WORKDIR ${BASE_PATH}
 CMD ["start-pentaho.sh"] 
