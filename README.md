@@ -28,7 +28,7 @@ Look around shell
 
 kubectl exec -it pod/ark-pentaho -- bash
 
-Webrowser to http://server:8080/
+Web browser to http://server:8080/
 
 kubectl --namespace default port-forward pod/ark-pentaho 2002 8080:8080 --address='0.0.0.0'
 
