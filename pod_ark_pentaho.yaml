@@ -13,6 +13,7 @@ spec:
     name: ark-pentaho
     ports:
     - containerPort: 2002
+    - containerPort: 8080
   hostname: ark-pentaho
   imagePullSecrets:
   - name: aws-arkcase-pull
