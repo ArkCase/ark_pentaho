@@ -1,4 +1,36 @@
-FROM 345280441424.dkr.ecr.ap-south-1.amazonaws.com/ark_base_java8:latest
+###########################################################################################################
+#
+# How to build:
+#
+# ./get-artifacts.sh
+# python -m SimpleHTTPServer 8000
+#
+# docker build -t 345280441424.dkr.ecr.ap-south-1.amazonaws.com/ark_pentaho:latest .
+# docker push 345280441424.dkr.ecr.ap-south-1.amazonaws.com/ark_pentaho:latest
+#
+# How to run: (Docker)
+# 
+# docker run --name ark_pentaho -d 345280441424.dkr.ecr.ap-south-1.amazonaws.com/ark_pentaho:latest 
+# docker exec -it ark_pentaho /bin/bash
+# docker stop ark_pentaho
+# docker rm ark_pentaho
+#
+# How to run: (Helm)
+#
+# helm repo add arkcase https://arkcase.github.io/ark_helm_charts/
+# helm install ark-pentaho-ce arkcase/ark-pentaho-ce
+# helm uninstall ark-pentaho-ce
+#
+###########################################################################################################
+
+FROM 345280441424.dkr.ecr.ap-south-1.amazonaws.com/ark_base:latest
+
+RUN yum -y install java-1.8.0-openjdk
+ENV JAVA_HOME=/usr/lib/jvm/jre-1.8.0-openjdk
+
+ENV BUILD_SERVER=10.0.0.4
+
+#FROM 345280441424.dkr.ecr.ap-south-1.amazonaws.com/ark_base_java8:latest
 ENV PENTAHO_CE_VERSION=8.1.0.0-365 \
     MYSQL_CONNECTOR_VERSION=8.0.25 \
     MARIADB_CONNECTOR_VERSION=2.2.6 \
@@ -22,19 +54,24 @@ RUN mkdir -p /home/pentaho/app/data/pentaho &&\
 #------------PENTAHO CE------------------------------------------
 
 #Copying pentaho ce 
-COPY ${RESOURCE_PATH}/pentaho-server-ce-${PENTAHO_CE_VERSION}.zip /home/pentaho/app/pentaho
+RUN env
+RUN curl ${BUILD_SERVER}:8000/pentaho-server-ce-${PENTAHO_CE_VERSION}.zip -o /home/pentaho/app/pentaho/pentaho-server-ce-${PENTAHO_CE_VERSION}.zip
+#COPY ${RESOURCE_PATH}/pentaho-server-ce-${PENTAHO_CE_VERSION}.zip /home/pentaho/app/pentaho
 #Installing unzip in centos
-RUN yum install -y unzip && \
+RUN yum install -y unzip curl && \
     yum clean -y all && \
-   cd /home/pentaho/app/pentaho && \
+    cd /home/pentaho/app/pentaho && \
     unzip pentaho-server-ce-${PENTAHO_CE_VERSION}.zip && \
     rm /home/pentaho/app/pentaho/pentaho-server/tomcat/lib/mysql-connector-java-5.1.17.jar
 
 #Database connectors
-COPY ${RESOURCE_PATH}/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar  ${RESOURCE_PATH}/mariadb-java-client-${MARIADB_CONNECTOR_VERSION}.jar ${BASE_PATH}/tomcat/lib/
+RUN curl ${BUILD_SERVER}:8000/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar -o ${BASE_PATH}/tomcat/lib/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar
+RUN curl ${BUILD_SERVER}:8000/mariadb-java-client-${MARIADB_CONNECTOR_VERSION}.jar -o ${BASE_PATH}/tomcat/lib/mariadb-java-client-${MARIADB_CONNECTOR_VERSION}.jar
+#COPY ${RESOURCE_PATH}/mysql-connector-java-${MYSQL_CONNECTOR_VERSION}.jar  ${RESOURCE_PATH}/mariadb-java-client-${MARIADB_CONNECTOR_VERSION}.jar ${BASE_PATH}/tomcat/lib/
 
 #---------preauthentication setup----------------------------------------------
-COPY ${RESOURCE_PATH}/arkcase-preauth-springsec-v${ARKCASE_PRE_AUTH_VERSION}-bundled.jar ${BASE_PATH}/tomcat/webapps/pentaho/WEB-INF/lib/
+RUN curl ${BUILD_SERVER}:8000/arkcase-preauth-springsec-v${ARKCASE_PRE_AUTH_VERSION}-bundled.jar -o ${BASE_PATH}/tomcat/webapps/pentaho/WEB-INF/lib/arkcase-preauth-springsec-v${ARKCASE_PRE_AUTH_VERSION}-bundled.jar
+#COPY ${RESOURCE_PATH}/arkcase-preauth-springsec-v${ARKCASE_PRE_AUTH_VERSION}-bundled.jar ${BASE_PATH}/tomcat/webapps/pentaho/WEB-INF/lib/
 #---------Update Pentaho to support report designer within ArkCase iframe---------
 RUN cp -rf  ${BASE_PATH}/tomcat/webapps/pentaho/mantle/home/properties/ ${BASE_PATH}/tomcat/webapps/pentaho/mantle/ && \
     cp -rf  ${BASE_PATH}/tomcat/webapps/pentaho/mantle/home/content ${BASE_PATH}/tomcat/webapps/pentaho/mantle && \
@@ -46,8 +83,10 @@ RUN cp -rf  ${BASE_PATH}/tomcat/webapps/pentaho/mantle/home/properties/ ${BASE_P
     cp -rf  ${BASE_PATH}/tomcat/webapps/pentaho/mantle/browser/* ${BASE_PATH}/tomcat/webapps/pentaho/mantle && \
     chown -R pentaho:pentaho /home/pentaho/* && \
     chmod -R 777  /home/pentaho/* && \
-    chmod -R 777  /home/pentaho/	
+    chmod -R 777  /home/pentaho/ && \
+    rm -f /home/pentaho/app/pentaho/pentaho-server/promptuser.sh && \
+    echo 'sleep infinity' >> /home/pentaho/app/pentaho/pentaho-server/start-pentaho.sh
 USER pentaho
 EXPOSE ${PENTAHO_PORT}
 WORKDIR ${BASE_PATH}
-CMD ["start-pentaho.sh"] 
+CMD ["/home/pentaho/app/pentaho/pentaho-server/start-pentaho.sh"] 
