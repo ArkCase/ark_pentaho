@@ -6,7 +6,7 @@
 
 cd ../artifacts_ark_pentaho_ce
 
-python -m SimpleHTTPServer 8000
+python3 -m http.server 8000
 
 note: modify BUILD_SERVER in ./Dockerfile to match ip address where artifacts are being hosted
 

@@ -4,7 +4,7 @@
 #
 # ./get-artifacts.sh
 # cd ../artifacts_ark_pentaho_ce
-# python -m SimpleHTTPServer 8000
+# python3 -m http.server 8000
 # note: modify BUILD_SERVER below to match ip address where artifacts are being hosted
 #
 # docker build -t 345280441424.dkr.ecr.ap-south-1.amazonaws.com/ark_pentaho:latest .
