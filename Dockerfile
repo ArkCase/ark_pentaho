@@ -3,6 +3,7 @@
 # How to build:
 #
 # ./get-artifacts.sh
+# cd ../artifacts_ark_pentaho_ce
 # python -m SimpleHTTPServer 8000
 # note: modify BUILD_SERVER below to match ip address where artifacts are being hosted
 #
