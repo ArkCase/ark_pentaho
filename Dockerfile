@@ -41,7 +41,7 @@ FROM 345280441424.dkr.ecr.ap-south-1.amazonaws.com/ark_base:latest
 RUN yum -y install java-1.8.0-openjdk
 ENV JAVA_HOME=/usr/lib/jvm/jre-1.8.0-openjdk
 
-ENV BUILD_SERVER=10.0.0.4
+ENV BUILD_SERVER=iad032-1san01.appdev.armedia.com
 
 #FROM 345280441424.dkr.ecr.ap-south-1.amazonaws.com/ark_base_java8:latest
 ENV PENTAHO_CE_VERSION=8.1.0.0-365 \
